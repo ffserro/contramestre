@@ -170,8 +170,8 @@ st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C2']}.</h3>', 
 st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem1)][0]}</h6>', unsafe_allow_html=True)
 st.divider()    
 st.title(f'Tabela de {meses[gera_mes]}')
-df1['DIA'] = pd.to_datetime(df1.DIA).dt.strftime('%d/%m/%Y')
 df1 = df1[df1.DIA>=dt.today()]
+df1['DIA'] = pd.to_datetime(df1.DIA).dt.strftime('%d/%m/%Y')
 df1 = df1.set_index('DIA')
 st.dataframe(df1.T, hide_index=True)#, height=1125)
 st.session_state.conn.update(worksheet=meses[gera_mes], data=df1)
