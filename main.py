@@ -67,6 +67,7 @@ vermelha.sort()
 
 def get_disponivel(data, efetivo, restrito):
     disp = list(efetivo.NOME.values)
+    st.stop()
     st.write(efetivo)
     for i in efetivo[(pd.to_datetime(efetivo.EMBARQUE) > pd.to_datetime(data)) | (pd.to_datetime(efetivo.DESEMBARQUE) <= pd.to_datetime(data))].NOME.values:
         disp.remove(i)
