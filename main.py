@@ -89,8 +89,8 @@ esc_vermelha = pd.DataFrame({'DATA':vermelha})
 
 
 #######################Ajustar os primeiros ASD
-esc_preta.loc[esc_preta.DATA == dt(2025, 1, 6), ['C1', 'C2']] = []
-esc_vermelha.loc[esc_vermelha.DATA == dt(2025, 1, 1), ['C1', 'C2']] = []
+esc_preta.loc[esc_preta.DATA == dt(2025, 1, 6), ['C1', 'C2']] = ['2SG-MC ROGÉRIO', '2SG-MR FERDINAND']
+esc_vermelha.loc[esc_vermelha.DATA == dt(2025, 1, 1), ['C1', 'C2']] = ['3SG-MT GURGEL', '2SG-MR SENA']
 
 
 
