@@ -165,9 +165,9 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.title(f'Contramestres de {dt.today().strftime('%d/%m')}:')
-    st.markdown(f'<h2>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C1']}; e</h2>', unsafe_allow_html=True)
-    st.markdown(f'<h2>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C2']}.</h2>', unsafe_allow_html=True)
-    st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem1)][0]}</h2>', unsafe_allow_html=True)
+    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C1']}; e</h3>', unsafe_allow_html=True)
+    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C2']}.</h3>', unsafe_allow_html=True)
+    st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem1)][0]}</h6>', unsafe_allow_html=True)
     st.divider()    
     st.title(f'Tabela de {meses[gera_mes]}')
     df1['DIA'] = pd.to_datetime(df1.DIA).dt.strftime('%d/%m/%Y')
@@ -179,9 +179,9 @@ with col1:
 
 with col2:
     st.title(f'Contramestres de {(dt.today() + td(days=1)).strftime('%d/%m')}:')
-    st.markdown(f'<h2>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C1']}; e</h2>', unsafe_allow_html=True)
-    st.markdown(f'<h2>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C2']}.</h2>', unsafe_allow_html=True)
-    st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem2)][0]}</h2>', unsafe_allow_html=True)
+    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C1']}; e</h3>', unsafe_allow_html=True)
+    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C2']}.</h3>', unsafe_allow_html=True)
+    st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem2)][0]}</h6>', unsafe_allow_html=True)
     st.divider()  
     st.title(f'Tabela de {meses[(gera_mes+1)%12]}')
     df2['DIA'] = pd.to_datetime(df2.DIA).dt.strftime('%d/%m/%Y')
