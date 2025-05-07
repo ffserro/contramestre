@@ -67,12 +67,10 @@ vermelha.sort()
 
 def get_disponivel(data, efetivo, restrito):
     disp = list(efetivo.NOME.values)
-    efetivo['EMBARQUE'] = pd.to_datetime(efetivo['EMBARQUE'])
-    efetivo['DESEMBARQUE'] = pd.to_datetime(efetivo['DESEMBARQUE'])
     data = pd.to_datetime(data)
-    for i in efetivo[(efetivo.EMBARQUE > data) | (efetivo.DESEMBARQUE <= data)].NOME.values:
+    for i in efetivo[(pd.to_datetime(efetivo.EMBARQUE) > data) | (pd.to_datetime(efetivo.DESEMBARQUE) <= data)].NOME.values:
         disp.remove(i)
-    for i in restrito[(restrito.INICIAL <= data) & (restrito.FINAL >= data)].NOME.unique():
+    for i in restrito[(pd.to_datetime(restrito.INICIAL) <= data) & (pd.to_datetime(restrito.FINAL) >= data)].NOME.unique():
         if i in disp:
             disp.remove(i)
     return disp
