@@ -108,12 +108,12 @@ for d in esc_preta.index[1:]:
     ontem_predio = get_disponivel(preta[preta.index(d) - 1], efetivo_predio, restrito)
     hoje_predio = get_disponivel(d, efetivo_predio, restrito)
     hoje_predio = hoje_predio + hoje_predio
-    passa_predio = esc_preta.loc[preta[preta.index(d) - 1], 'C1'].iloc[0]
+    passa_predio = esc_preta.loc[preta[preta.index(d) - 1], 'C1']
 
     ontem_avipa = get_disponivel(preta[preta.index(d) - 1], efetivo_avipa, restrito)
     hoje_avipa = get_disponivel(d, efetivo_avipa, restrito)
     hoje_avipa = hoje_avipa + hoje_avipa
-    passa_avipa = esc_preta.loc[preta[preta.index(d) - 1], 'C2'].iloc[0]
+    passa_avipa = esc_preta.loc[preta[preta.index(d) - 1], 'C2']
 
     try:
         esc_preta.loc[d, 'C1'] = que_se_segue(passa_predio, efetivo_predio, hoje_predio, 'p')
@@ -130,11 +130,11 @@ for d in esc_preta.index[1:]:
 for d in esc_vermelha.index[1:]:
     ontem_predio = get_disponivel(vermelha[vermelha.index(d) - 1], efetivo_predio, restrito)
     hoje_predio = get_disponivel(d, efetivo_predio, restrito)
-    passa_predio = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C1'].iloc[0]
+    passa_predio = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C1']
 
     ontem_avipa = get_disponivel(vermelha[vermelha.index(d) - 1], efetivo_avipa, restrito)
     hoje_avipa = get_disponivel(d, efetivo_avipa, restrito)
-    passa_avipa = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C2'].iloc[0]
+    passa_avipa = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C2']
 
     try:
         esc_vermelha.loc[d, 'C1'] = que_se_segue(passa_predio, efetivo_predio, hoje_predio, 'v')
