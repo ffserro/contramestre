@@ -137,9 +137,10 @@ for d in esc_vermelha.index[1:]:
     except Exception as e:
         st.write(e)
         pass
-    
+
+esc_preta['C2'] = esc_corrida[esc_preta.index].C2
+esc_vermelha['C2'] = esc_corrida[esc_vermelha.index].C2
 geral_corrida = pd.concat([esc_preta, esc_vermelha]).sort_index()
-geral_corrida[esc_corrida.index] = esc_corrida['C2']
 
 troca = troca_update()
 geral_corrida.index = pd.to_datetime(geral_corrida.index)
