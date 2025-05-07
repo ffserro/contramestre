@@ -24,12 +24,12 @@ def licpag_update():
 
 def efetivo_update():
     st.session_state.efetivo_predio = st.session_state.conn.read(worksheet='EMB_PREDIO', ttl=60)
-    st.session_state.efetivo_predio['EMBARQUE'] = pd.to_datetime(st.session_state.efetivo['EMBARQUE'], dayfirst=True).dt.date
-    st.session_state.efetivo_predio['DESEMBARQUE'] = pd.to_datetime(st.session_state.efetivo['DESEMBARQUE'], dayfirst=True).dt.date
+    st.session_state.efetivo_predio['EMBARQUE'] = pd.to_datetime(st.session_state.efetivo_predio['EMBARQUE'], dayfirst=True).dt.date
+    st.session_state.efetivo_predio['DESEMBARQUE'] = pd.to_datetime(st.session_state.efetivo_predio['DESEMBARQUE'], dayfirst=True).dt.date
     
     st.session_state.efetivo_avipa = st.session_state.conn.read(worksheet='EMB_AVIPA', ttl=60)
-    st.session_state.efetivo_avipa['EMBARQUE'] = pd.to_datetime(st.session_state.efetivo['EMBARQUE'], dayfirst=True).dt.date
-    st.session_state.efetivo_avipa['DESEMBARQUE'] = pd.to_datetime(st.session_state.efetivo['DESEMBARQUE'], dayfirst=True).dt.date
+    st.session_state.efetivo_avipa['EMBARQUE'] = pd.to_datetime(st.session_state.efetivo_avipa['EMBARQUE'], dayfirst=True).dt.date
+    st.session_state.efetivo_avipa['DESEMBARQUE'] = pd.to_datetime(st.session_state.efetivo_avipa['DESEMBARQUE'], dayfirst=True).dt.date
     
     return st.session_state.efetivo_predio, st.session_state.efetivo_avipa
 
