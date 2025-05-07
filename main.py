@@ -138,8 +138,8 @@ for d in esc_vermelha.index[1:]:
         st.write(e)
         pass
 
-esc_preta['C2'] = esc_corrida[esc_preta.index].C2
-esc_vermelha['C2'] = esc_corrida[esc_vermelha.index].C2
+esc_preta.loc[:,'C2'] = esc_corrida.loc[esc_preta.index].C2
+esc_vermelha.loc[:,'C2'] = esc_corrida.loc[esc_vermelha.index].C2
 geral_corrida = pd.concat([esc_preta, esc_vermelha]).sort_index()
 
 troca = troca_update()
