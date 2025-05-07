@@ -148,11 +148,12 @@ for i, row in troca.iterrows():
     
 gera_mes = dt.today().month # meses.index(st.selectbox('Gerar tabela do mês:', meses))
 
-st.write(meses)
-st.write(gera_mes)
-
 df1 = pd.DataFrame({'DIA': [d for d in datas if d.month == gera_mes], 'TABELA':['V' if d in vermelha else 'P' for d in datas if d.month == gera_mes], 'C1':[geral_corrida.loc[pd.to_datetime(d), 'C1'] for d in datas if d.month == gera_mes], 'C2':[geral_corrida.loc[pd.to_datetime(d), 'C2'] for d in datas if d.month == gera_mes]})
 df2 = pd.DataFrame({'DIA': [d for d in datas if d.month == (gera_mes+1)%12], 'TABELA':['V' if d in vermelha else 'P' for d in datas if d.month == (gera_mes+1)%12], 'C1':[geral_corrida.loc[pd.to_datetime(d), 'C1'] for d in datas if d.month == (gera_mes+1)%12], 'C2':[geral_corrida.loc[pd.to_datetime(d), 'C2'] for d in datas if d.month == (gera_mes+1)%12]})
+
+st.write(meses)
+st.write(gera_mes)
+st.write(df1)
 
 if dt.today() in preta:
     retem1 = preta[preta.index(dt.today())+2]
