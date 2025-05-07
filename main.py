@@ -9,8 +9,6 @@ from dateutil import tz
 
 tzinfo = tz.gettz('America/Sao_Paulo')
 
-# st.title('TABELONA DO 💡')
-
 st.session_state.conn = st.connection('gsheets', type=GSheetsConnection)
 
 def troca_update():
@@ -25,17 +23,21 @@ def licpag_update():
     return st.session_state.licpag
 
 def efetivo_update():
-    st.session_state.efetivo = st.session_state.conn.read(worksheet='EMB', ttl=60)
-    st.session_state.efetivo['EMBARQUE'] = pd.to_datetime(st.session_state.efetivo['EMBARQUE'], dayfirst=True).dt.date
-    st.session_state.efetivo['DESEMBARQUE'] = pd.to_datetime(st.session_state.efetivo['DESEMBARQUE'], dayfirst=True).dt.date
-    return st.session_state.efetivo
+    st.session_state.efetivo_predio = st.session_state.conn.read(worksheet='EMB_PREDIO', ttl=60)
+    st.session_state.efetivo_predio['EMBARQUE'] = pd.to_datetime(st.session_state.efetivo['EMBARQUE'], dayfirst=True).dt.date
+    st.session_state.efetivo_predio['DESEMBARQUE'] = pd.to_datetime(st.session_state.efetivo['DESEMBARQUE'], dayfirst=True).dt.date
+    
+    st.session_state.efetivo_avipa = st.session_state.conn.read(worksheet='EMB_AVIPA', ttl=60)
+    st.session_state.efetivo_avipa['EMBARQUE'] = pd.to_datetime(st.session_state.efetivo['EMBARQUE'], dayfirst=True).dt.date
+    st.session_state.efetivo_avipa['DESEMBARQUE'] = pd.to_datetime(st.session_state.efetivo['DESEMBARQUE'], dayfirst=True).dt.date
+    
+    return st.session_state.efetivo_predio, st.session_state.efetivo_avipa
 
 def restrito_update():
     st.session_state.restrito = st.session_state.conn.read(worksheet='REST', ttl=60)
     st.session_state.restrito['INICIAL'] = pd.to_datetime(st.session_state.restrito['INICIAL'], dayfirst=True).dt.date
     st.session_state.restrito['FINAL'] = pd.to_datetime(st.session_state.restrito['FINAL'], dayfirst=True).dt.date
     st.session_state.restrito.loc[st.session_state.restrito.MOTIVO=='Férias', 'INICIAL'] = st.session_state.restrito.loc[st.session_state.restrito.MOTIVO=='Férias', 'INICIAL'] - td(days=1)
-    st.session_state.restrito.loc[st.session_state.restrito.MOTIVO=='Férias', 'FINAL'] = st.session_state.restrito.loc[st.session_state.restrito.MOTIVO=='Férias', 'FINAL'] + td(days=1)
     st.session_state.restrito.loc[st.session_state.restrito.MOTIVO=='Viagem', 'FINAL'] = st.session_state.restrito.loc[st.session_state.restrito.MOTIVO=='Viagem', 'FINAL'] + td(days=1)
     return st.session_state.restrito
 
@@ -43,9 +45,6 @@ ano = 2025
 meses = ['-', 'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 
 datas = [dt(ano, 1, 1) + td(i) for i in range(365)]
-
-#######
-# datas = [i for i in datas if i.month in (dt.today().month, (dt.today().month-1)%12+1)]
 
 feriados = holidays.Brazil()['{}-01-01'.format(ano): '{}-12-31'.format(ano)] + [dt(ano, 6, 11), dt(ano, 12, 13)]
 
@@ -64,7 +63,7 @@ for d in vermelha:
         vermelha.append(d + td(1))
         preta.remove(d + td(1))
 
-vermelha.sort()        
+vermelha.sort()
 
 def get_disponivel(data, efetivo, restrito):
     disp = list(efetivo.NOME.values)
@@ -88,8 +87,10 @@ def que_se_segue(passa, efetivo, hoje, tabela):
 esc_preta = pd.DataFrame({'DATA':preta})
 esc_vermelha = pd.DataFrame({'DATA':vermelha})
 
-esc_preta.loc[esc_preta.DATA == dt(2025, 1, 6), 'NOME'] = '1T Brenno Carvalho'
-esc_vermelha.loc[esc_vermelha.DATA == dt(2025, 1, 1), 'NOME'] = 'CT(IM) Sêrro'
+
+#######################Ajustar os primeiros ASD
+esc_preta.loc[esc_preta.DATA == dt(2025, 1, 6), ['C1', 'C2']] = []
+esc_vermelha.loc[esc_vermelha.DATA == dt(2025, 1, 1), ['C1', 'C2']] = []
 
 
 
@@ -97,17 +98,24 @@ esc_preta.set_index('DATA', inplace=True)
 esc_vermelha.set_index('DATA', inplace=True)
 
 restrito = restrito_update()
-efetivo = efetivo_update()
+efetivo_predio, efetivo_avipa = efetivo_update()
 # st.write(list(efetivo.NOME.values))
 # st.write(list(efetivo.NOME.values)[::-1])
+
 for d in esc_preta.index[1:]:
-    ontem = get_disponivel(preta[preta.index(d) - 1], efetivo, restrito)
-    hoje = get_disponivel(d, efetivo, restrito)
-    hoje = hoje + hoje
-    passa = esc_preta.loc[preta[preta.index(d) - 1]].iloc[0]
+    ontem_predio = get_disponivel(preta[preta.index(d) - 1], efetivo_predio, restrito)
+    hoje_predio = get_disponivel(d, efetivo_predio, restrito)
+    hoje_predio = hoje_predio + hoje_predio
+    passa_predio = esc_preta.loc[preta[preta.index(d) - 1], 'C1'].iloc[0]
+
+    ontem_avipa = get_disponivel(preta[preta.index(d) - 1], efetivo_avipa, restrito)
+    hoje_avipa = get_disponivel(d, efetivo_avipa, restrito)
+    hoje_avipa = hoje_avipa + hoje_avipa
+    passa_avipa = esc_preta.loc[preta[preta.index(d) - 1], 'C2'].iloc[0]
 
     try:
-        esc_preta.loc[d, 'NOME'] = que_se_segue(passa, efetivo, hoje, 'p')
+        esc_preta.loc[d, 'C1'] = que_se_segue(passa_predio, efetivo_predio, hoje_predio, 'p')
+        esc_preta.loc[d, 'C2'] = que_se_segue(passa_avipa, efetivo_avipa, hoje_avipa, 'p')
     except Exception as e:
         st.write(e)
         pass
@@ -118,12 +126,17 @@ for d in esc_preta.index[1:]:
     #    esc_preta.loc[d, 'NOME'] = hoje[ontem.index(passa)]
 
 for d in esc_vermelha.index[1:]:
-    ontem = get_disponivel(vermelha[vermelha.index(d) - 1], efetivo, restrito)
-    hoje = get_disponivel(d, efetivo, restrito)
-    passa = esc_vermelha.loc[vermelha[vermelha.index(d) - 1]].iloc[0]
+    ontem_predio = get_disponivel(vermelha[vermelha.index(d) - 1], efetivo_predio, restrito)
+    hoje_predio = get_disponivel(d, efetivo_predio, restrito)
+    passa_predio = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C1'].iloc[0]
+
+    ontem_avipa = get_disponivel(vermelha[vermelha.index(d) - 1], efetivo_avipa, restrito)
+    hoje_avipa = get_disponivel(d, efetivo_avipa, restrito)
+    passa_avipa = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C2'].iloc[0]
 
     try:
-        esc_vermelha.loc[d, 'NOME'] = que_se_segue(passa, efetivo, hoje, 'v')
+        esc_vermelha.loc[d, 'C1'] = que_se_segue(passa_predio, efetivo_predio, hoje_predio, 'v')
+        esc_vermelha.loc[d, 'C2'] = que_se_segue(passa_avipa, efetivo_avipa, hoje_avipa, 'v')
     except Exception as e:
         st.write(e)
         pass
@@ -239,15 +252,15 @@ gera_mes = dt.today().month # meses.index(st.selectbox('Gerar tabela do mês:', 
 
 
 ### POROROCA
-carnaval = ['CT Tarle', '2T(IM) Soares Costa', 'CT Felipe Gondim', '1T Brenno Carvalho', 'SO-MO Alvarez', 'CT Damasceno', '1T Brenno Carvalho', 'CT(IM) Sêrro', 'CT Belmonte', '2T(IM) Soares Costa']
-for i in range(10):
-    geral_corrida.loc[pd.to_datetime(dt(2025,2,28) + td(days=i))] = carnaval[i]
+# carnaval = ['CT Tarle', '2T(IM) Soares Costa', 'CT Felipe Gondim', '1T Brenno Carvalho', 'SO-MO Alvarez', 'CT Damasceno', '1T Brenno Carvalho', 'CT(IM) Sêrro', 'CT Belmonte', '2T(IM) Soares Costa']
+# for i in range(10):
+#     geral_corrida.loc[pd.to_datetime(dt(2025,2,28) + td(days=i))] = carnaval[i]
 
 
 df1 = pd.DataFrame({'DIA': [d for d in datas if d.month == gera_mes], 'TABELA':['V' if d in vermelha else 'P' for d in datas if d.month == gera_mes], 'NOME':[geral_corrida.loc[pd.to_datetime(d)][0] for d in datas if d.month == gera_mes]})
 df2 = pd.DataFrame({'DIA': [d for d in datas if d.month == (gera_mes+1)%12], 'TABELA':['V' if d in vermelha else 'P' for d in datas if d.month == (gera_mes+1)%12], 'NOME':[geral_corrida.loc[pd.to_datetime(d)][0] for d in datas if d.month == (gera_mes+1)%12]})
 
-df1.loc[(df1.DIA >= dt(2025,3,1)) & (df1.DIA <= dt(2025,3,9)), 'TABELA'] = 'R'
+# df1.loc[(df1.DIA >= dt(2025,3,1)) & (df1.DIA <= dt(2025,3,9)), 'TABELA'] = 'R'
 
 if dt.today() in preta:
     retem1 = preta[preta.index(dt.today())+2]
