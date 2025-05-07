@@ -93,7 +93,7 @@ esc_corrida = pd.DataFrame({'DATA':datas})
 #######################Ajustar os primeiros ASD
 esc_preta.loc[esc_preta.DATA == dt(2025, 1, 6), 'C1'] = '2SG-MC ROGÉRIO'
 esc_vermelha.loc[esc_vermelha.DATA == dt(2025, 1, 1), 'C1'] = '3SG-MT GURGEL'
-esc_corrida.loc[esc_vermelha.DATA == dt(2025,1,1), 'C2'] = '2SG-MR FERDINAND'
+esc_corrida.loc[esc_corrida.DATA == dt(2025,1,1), 'C2'] = '2SG-MR FERDINAND'
 
 
 esc_preta.set_index('DATA', inplace=True)
