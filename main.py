@@ -77,8 +77,8 @@ def get_disponivel(data, efetivo, restrito):
 
 def que_se_segue(passa, efetivo, hoje, tabela):
     efetivos = list(efetivo.NOME.values)
-    if tabela == 'p':
-        efetivos = efetivos[::-1]
+    # if tabela == 'p':
+    efetivos = efetivos[::-1]
     for i in range(1, len(efetivos)):
         cara = efetivos[efetivos.index(passa) - i]
         if cara in hoje:
@@ -87,16 +87,18 @@ def que_se_segue(passa, efetivo, hoje, tabela):
 
 esc_preta = pd.DataFrame({'DATA':preta})
 esc_vermelha = pd.DataFrame({'DATA':vermelha})
+esc_corrida = pd.DataFrame({'DATA':datas})
 
 
 #######################Ajustar os primeiros ASD
-esc_preta.loc[esc_preta.DATA == dt(2025, 1, 6), ['C1', 'C2']] = ['2SG-MC ROGÉRIO', '2SG-MR FERDINAND']
-esc_vermelha.loc[esc_vermelha.DATA == dt(2025, 1, 1), ['C1', 'C2']] = ['3SG-MT GURGEL', '2SG-MR SENA']
-
+esc_preta.loc[esc_preta.DATA == dt(2025, 1, 6), 'C1'] = '2SG-MC ROGÉRIO'
+esc_vermelha.loc[esc_vermelha.DATA == dt(2025, 1, 1), 'C1'] = '3SG-MT GURGEL'
+esc_corrida.loc[esc_vermelha.DATA == dt(2025,1,1), 'C2'] = '2SG-MR FERDINAND'
 
 
 esc_preta.set_index('DATA', inplace=True)
 esc_vermelha.set_index('DATA', inplace=True)
+esc_corrida.set_index('DATA', inplace=True)
 
 restrito = restrito_update()
 efetivo_predio, efetivo_avipa = efetivo_update()
@@ -107,14 +109,14 @@ for d in esc_preta.index[1:]:
     hoje_predio = hoje_predio + hoje_predio
     passa_predio = esc_preta.loc[preta[preta.index(d) - 1], 'C1']
 
-    ontem_avipa = get_disponivel(preta[preta.index(d) - 1], efetivo_avipa, restrito)
+    ontem_avipa = get_disponivel(datas[datas.index(d) - 1], efetivo_avipa, restrito)
     hoje_avipa = get_disponivel(d, efetivo_avipa, restrito)
     hoje_avipa = hoje_avipa + hoje_avipa
-    passa_avipa = esc_preta.loc[preta[preta.index(d) - 1], 'C2']
+    passa_avipa = esc_corrida.loc[datas[datas.index(d) - 1], 'C2']
 
     try:
         esc_preta.loc[d, 'C1'] = que_se_segue(passa_predio, efetivo_predio, hoje_predio, 'p')
-        esc_preta.loc[d, 'C2'] = que_se_segue(passa_avipa, efetivo_avipa, hoje_avipa, 'p')
+        esc_corrida.loc[d, 'C2'] = que_se_segue(passa_avipa, efetivo_avipa, hoje_avipa, 'c')
     except Exception as e:
         st.write(e)
         pass
@@ -125,18 +127,19 @@ for d in esc_vermelha.index[1:]:
     hoje_predio = get_disponivel(d, efetivo_predio, restrito)
     passa_predio = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C1']
 
-    ontem_avipa = get_disponivel(vermelha[vermelha.index(d) - 1], efetivo_avipa, restrito)
+    ontem_avipa = get_disponivel(datas[datas.index(d) - 1], efetivo_avipa, restrito)
     hoje_avipa = get_disponivel(d, efetivo_avipa, restrito)
-    passa_avipa = esc_vermelha.loc[vermelha[vermelha.index(d) - 1], 'C2']
+    passa_avipa = esc_corrida.loc[datas[datas.index(d) - 1], 'C2']
 
     try:
         esc_vermelha.loc[d, 'C1'] = que_se_segue(passa_predio, efetivo_predio, hoje_predio, 'v')
-        esc_vermelha.loc[d, 'C2'] = que_se_segue(passa_avipa, efetivo_avipa, hoje_avipa, 'v')
+        esc_corrida.loc[d, 'C2'] = que_se_segue(passa_avipa, efetivo_avipa, hoje_avipa, 'c')
     except Exception as e:
         st.write(e)
         pass
     
 geral_corrida = pd.concat([esc_preta, esc_vermelha]).sort_index()
+geral_corrida[esc_corrida.index] = esc_corrida['C2']
 
 troca = troca_update()
 geral_corrida.index = pd.to_datetime(geral_corrida.index)
