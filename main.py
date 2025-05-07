@@ -228,25 +228,25 @@ for i, row in troca.iterrows():
     geral_corrida.loc[row.DE, 'NOME'] = troc2
     geral_corrida.loc[row.PARA, 'NOME'] = troc1
 
-conflitos = {nome:list(geral_corrida[geral_corrida.NOME==nome].index) for nome in efetivo.NOME}
-for nome in conflitos:
-    ps = []
-    for i in range(len(conflitos[nome])-1):
-        a, b = conflitos[nome][i], conflitos[nome][i + 1]
-        if b - a <= td(2):
-            ps.append((a, b))
-    conflitos[nome] = ps
+#conflitos = {nome:list(geral_corrida[geral_corrida.NOME==nome].index) for nome in efetivo.NOME}
+#for nome in conflitos:
+#    ps = []
+#    for i in range(len(conflitos[nome])-1):
+#        a, b = conflitos[nome][i], conflitos[nome][i + 1]
+#        if b - a <= td(2):
+#            ps.append((a, b))
+#    conflitos[nome] = ps
 
-def filtra(mes, conflitos):
-  novo_conflitos = {}
-  for i in conflitos:
-    for j in conflitos[i]:
-      if j[0].month==mes or j[1].month==mes:
-          if i in novo_conflitos.keys():
-              novo_conflitos[i+f'_{list(novo_conflitos).count(i)}'] = [x.strftime('%d/%m') for x in j]
-          else:
-              novo_conflitos[i] = [x.strftime('%d/%m') for x in j]
-  return novo_conflitos
+#def filtra(mes, conflitos):
+#  novo_conflitos = {}
+#  for i in conflitos:
+#    for j in conflitos[i]:
+#      if j[0].month==mes or j[1].month==mes:
+#          if i in novo_conflitos.keys():
+#              novo_conflitos[i+f'_{list(novo_conflitos).count(i)}'] = [x.strftime('%d/%m') for x in j]
+#          else:
+#              novo_conflitos[i] = [x.strftime('%d/%m') for x in j]
+#  return novo_conflitos
     
 gera_mes = dt.today().month # meses.index(st.selectbox('Gerar tabela do mês:', meses))
 
