@@ -67,11 +67,11 @@ vermelha.sort()
 
 def get_disponivel(data, efetivo, restrito):
     disp = list(efetivo.NOME.values)
-    st.write(disp)
-    st.stop()
-    for i in efetivo[(pd.to_datetime(efetivo.EMBARQUE) > pd.to_datetime(data)) | (pd.to_datetime(efetivo.DESEMBARQUE) <= pd.to_datetime(data))].NOME.values:
+    efetivo[['EMBARQUE', 'DESEMBARQUE']] = pd.to_datetime(efetivo[['EMBARQUE', 'DESEMBARQUE']])
+    data = pd.to_datetime(data)
+    for i in efetivo[(efetivo.EMBARQUE > data) | (efetivo.DESEMBARQUE <= data)].NOME.values:
         disp.remove(i)
-    for i in restrito[(pd.to_datetime(restrito.INICIAL) <= pd.to_datetime(data)) & (pd.to_datetime(restrito.FINAL) >= pd.to_datetime(data))].NOME.unique():
+    for i in restrito[(restrito.INICIAL <= data) & (restrito.FINAL >= data)].NOME.unique():
         if i in disp:
             disp.remove(i)
     return disp
@@ -101,8 +101,6 @@ esc_vermelha.set_index('DATA', inplace=True)
 
 restrito = restrito_update()
 efetivo_predio, efetivo_avipa = efetivo_update()
-# st.write(list(efetivo.NOME.values))
-# st.write(list(efetivo.NOME.values)[::-1])
 
 for d in esc_preta.index[1:]:
     ontem_predio = get_disponivel(preta[preta.index(d) - 1], efetivo_predio, restrito)
@@ -122,10 +120,6 @@ for d in esc_preta.index[1:]:
         st.write(e)
         pass
     
-    #if passa in hoje:
-    #    esc_preta.loc[d, 'NOME'] = hoje[hoje.index(passa) + 1]
-    #else:
-    #    esc_preta.loc[d, 'NOME'] = hoje[ontem.index(passa)]
 
 for d in esc_vermelha.index[1:]:
     ontem_predio = get_disponivel(vermelha[vermelha.index(d) - 1], efetivo_predio, restrito)
@@ -143,84 +137,7 @@ for d in esc_vermelha.index[1:]:
         st.write(e)
         pass
     
-    #if passa in hoje:
-    #    esc_vermelha.loc[d, 'NOME'] = hoje[hoje.index(passa) - 1]
-    #else:
-    #    try:
-    #        # st.write(efetivo)
-    #        st.write(d, passa)
-    #        st.write(que_se_segue(passa, efetivo, hoje, 'v'))
-    #        st.write(hoje)
-    #        st.write(ontem)
-    #        # esc_vermelha.loc[d, 'NOME'] = hoje[ontem.index(passa) - 1]
-    #        esc_vermelha.loc[d, 'NOME']  = que_se_segue(passa, efetivo, hoje, 'v')
-    #    except Exception as e:
-    #        st.write(e)
-    #        pass
-            # st.write(esc_vermelha.dropna().tail())
-            # st.write('hoje', d)
-            # st.write('ontem', d - td(1))
-            # st.write(ontem)
-            # st.write(hoje)
-            # st.write(passa)
-
-# st.write('preta', esc_preta)
-# st.write('vermelha', esc_vermelha)
-
 geral_corrida = pd.concat([esc_preta, esc_vermelha]).sort_index()
-
-#conflitos = {nome:list(geral_corrida[geral_corrida.NOME==nome].index) for nome in efetivo.NOME}
-
-#for nome in conflitos:
-#    ps = []
-#    for i in range(len(conflitos[nome])-1):
-#        a, b = conflitos[nome][i], conflitos[nome][i + 1]
-#        if b - a <= td(2):
-#            ps.append((a, b))
-#    conflitos[nome] = ps
-
-#st.write(conflitos)
-
-# auto = pd.DataFrame({'DE':[], 'PARA':[], 'MOTIVO':[]})
-# while any(len(conflitos[nome]) > 0 for nome in conflitos):
-#    ignored = []
-#    for nome in conflitos:
-#        for conflito in conflitos[nome]:
-#            ver = conflito[0] if conflito[0] in vermelha else conflito[1]
-#            pre = conflito[1] if conflito[1] in preta else conflito[0]
-#    
-#            if pre < ver:
-#                if any((auto.loc[auto.DE==pre].PARA==preta[preta.index(pre) - 2]).values) or (pre, preta[preta.index(pre) - 2]) in ignored:
-#                    ignored.append((pre, preta[preta.index(pre) - 2]))
-#                    continue
-#                geral_corrida.loc[pre], geral_corrida.loc[preta[preta.index(pre) - 2]] = geral_corrida.loc[preta[preta.index(pre) - 2]], geral_corrida.loc[pre]
-#                auto = pd.concat([auto, pd.DataFrame({'DE':[pre], 'PARA':[preta[preta.index(pre) - 2]], 'MOTIVO':['AUTOMÁTICA']})])
-#            else:
-#                if pre >= dt(ano, 12, 29):
-#                    ignored.append((pre, pre+td(2)))
-#                    continue
-#                elif any((auto.loc[auto.DE==pre].PARA==preta[preta.index(pre) + 2]).values) or (pre, preta[preta.index(pre) + 2]) in ignored:
-#                    ignored.append((pre, preta[preta.index(pre) + 2]))
-#                    continue
-#                geral_corrida.loc[pre], geral_corrida.loc[preta[preta.index(pre) + 2]] = geral_corrida.loc[preta[preta.index(pre) + 2]], geral_corrida.loc[pre]
-#                auto = pd.concat([auto, pd.DataFrame({'DE':[pre], 'PARA':[preta[preta.index(pre) + 2]], 'MOTIVO':['AUTOMÁTICA']})])
-
-#    conflitos = {nome:list(geral_corrida[geral_corrida.NOME==nome].index) for nome in efetivo.NOME}
-    
-#    for nome in conflitos:
-#        ps = []
-#        for i in range(len(conflitos[nome])-1):
-#            a, b = conflitos[nome][i], conflitos[nome][i + 1]
-#            if b - a <= td(2):
-#                ps.append((a, b))
-#        conflitos[nome] = ps
-#    
-#    if len(set(ignored)) == sum([len(conflitos[nome]) for nome in conflitos]):
-#        # for a, b in set(ignored):
-#            # st.write(f'Houve conflito nas trocas automáticas entre os dias {a.strftime('%d/%m')} e {b.strftime('%d/%m')}')
-#        break
-
-# st.session_state.conn.update(worksheet='TROCA_AUT', data=auto.drop_duplicates())
 
 troca = troca_update()
 geral_corrida.index = pd.to_datetime(geral_corrida.index)
@@ -229,40 +146,12 @@ for i, row in troca.iterrows():
     troc2 = geral_corrida.loc[row.PARA, 'NOME']
     geral_corrida.loc[row.DE, 'NOME'] = troc2
     geral_corrida.loc[row.PARA, 'NOME'] = troc1
-
-#conflitos = {nome:list(geral_corrida[geral_corrida.NOME==nome].index) for nome in efetivo.NOME}
-#for nome in conflitos:
-#    ps = []
-#    for i in range(len(conflitos[nome])-1):
-#        a, b = conflitos[nome][i], conflitos[nome][i + 1]
-#        if b - a <= td(2):
-#            ps.append((a, b))
-#    conflitos[nome] = ps
-
-#def filtra(mes, conflitos):
-#  novo_conflitos = {}
-#  for i in conflitos:
-#    for j in conflitos[i]:
-#      if j[0].month==mes or j[1].month==mes:
-#          if i in novo_conflitos.keys():
-#              novo_conflitos[i+f'_{list(novo_conflitos).count(i)}'] = [x.strftime('%d/%m') for x in j]
-#          else:
-#              novo_conflitos[i] = [x.strftime('%d/%m') for x in j]
-#  return novo_conflitos
     
 gera_mes = dt.today().month # meses.index(st.selectbox('Gerar tabela do mês:', meses))
 
 
-### POROROCA
-# carnaval = ['CT Tarle', '2T(IM) Soares Costa', 'CT Felipe Gondim', '1T Brenno Carvalho', 'SO-MO Alvarez', 'CT Damasceno', '1T Brenno Carvalho', 'CT(IM) Sêrro', 'CT Belmonte', '2T(IM) Soares Costa']
-# for i in range(10):
-#     geral_corrida.loc[pd.to_datetime(dt(2025,2,28) + td(days=i))] = carnaval[i]
-
-
 df1 = pd.DataFrame({'DIA': [d for d in datas if d.month == gera_mes], 'TABELA':['V' if d in vermelha else 'P' for d in datas if d.month == gera_mes], 'NOME':[geral_corrida.loc[pd.to_datetime(d)][0] for d in datas if d.month == gera_mes]})
 df2 = pd.DataFrame({'DIA': [d for d in datas if d.month == (gera_mes+1)%12], 'TABELA':['V' if d in vermelha else 'P' for d in datas if d.month == (gera_mes+1)%12], 'NOME':[geral_corrida.loc[pd.to_datetime(d)][0] for d in datas if d.month == (gera_mes+1)%12]})
-
-# df1.loc[(df1.DIA >= dt(2025,3,1)) & (df1.DIA <= dt(2025,3,9)), 'TABELA'] = 'R'
 
 if dt.today() in preta:
     retem1 = preta[preta.index(dt.today())+2]
