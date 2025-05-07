@@ -161,32 +161,32 @@ if (dt.today() + td(days=1)) in preta:
 elif (dt.today() + td(days=1)) in vermelha:
     retem2 = vermelha[vermelha.index(dt.today() + td(days=1)) + 2]
 
-col1, col2 = st.columns(2)
+# col1, col2 = st.columns(2)
 
-with col1:
-    st.title(f'Contramestres de {dt.today().strftime('%d/%m')}:')
-    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C1']}; e</h3>', unsafe_allow_html=True)
-    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C2']}.</h3>', unsafe_allow_html=True)
-    st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem1)][0]}</h6>', unsafe_allow_html=True)
-    st.divider()    
-    st.title(f'Tabela de {meses[gera_mes]}')
-    df1['DIA'] = pd.to_datetime(df1.DIA).dt.strftime('%d/%m/%Y')
-    st.dataframe(df1, hide_index=True, height=1125)
-    st.session_state.conn.update(worksheet=meses[gera_mes], data=df1)
+# with col1:
+st.title(f'Contramestres de {dt.today().strftime('%d/%m')}:')
+st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C1']}; e</h3>', unsafe_allow_html=True)
+st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today()), 'C2']}.</h3>', unsafe_allow_html=True)
+st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem1)][0]}</h6>', unsafe_allow_html=True)
+st.divider()    
+st.title(f'Tabela de {meses[gera_mes]}')
+df1['DIA'] = pd.to_datetime(df1.DIA).dt.strftime('%d/%m/%Y')
+st.dataframe(df1.T, hide_index=True, height=1125)
+st.session_state.conn.update(worksheet=meses[gera_mes], data=df1)
     # st.write('Conflitos:')
     # st.write(pd.DataFrame(filtra(gera_mes, conflitos)).T.rename(columns={0:'DE', 1:'PARA'}))
 
 
-with col2:
-    st.title(f'Contramestres de {(dt.today() + td(days=1)).strftime('%d/%m')}:')
-    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C1']}; e</h3>', unsafe_allow_html=True)
-    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C2']}.</h3>', unsafe_allow_html=True)
-    st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem2)][0]}</h6>', unsafe_allow_html=True)
-    st.divider()  
-    st.title(f'Tabela de {meses[(gera_mes+1)%12]}')
-    df2['DIA'] = pd.to_datetime(df2.DIA).dt.strftime('%d/%m/%Y')
-    st.dataframe(df2, hide_index=True, height=1125)
-    st.session_state.conn.update(worksheet=meses[(gera_mes+1)%12], data=df2)
+# with col2:
+#    st.title(f'Contramestres de {(dt.today() + td(days=1)).strftime('%d/%m')}:')
+#    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C1']}; e</h3>', unsafe_allow_html=True)
+#    st.markdown(f'<h3>{geral_corrida.loc[pd.to_datetime(dt.today() + td(days=1)), 'C2']}.</h3>', unsafe_allow_html=True)
+#    st.markdown(f'<h6>Retém: {geral_corrida.loc[pd.to_datetime(retem2)][0]}</h6>', unsafe_allow_html=True)
+#    st.divider()  
+#    st.title(f'Tabela de {meses[(gera_mes+1)%12]}')
+#    df2['DIA'] = pd.to_datetime(df2.DIA).dt.strftime('%d/%m/%Y')
+#    st.dataframe(df2, hide_index=True, height=1125)
+#    st.session_state.conn.update(worksheet=meses[(gera_mes+1)%12], data=df2)
     # st.write('Conflitos:')
     # st.write(pd.DataFrame(filtra(gera_mes+1, conflitos)).T.rename(columns={0:'DE', 1:'PARA'}))
 
