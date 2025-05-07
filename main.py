@@ -69,9 +69,9 @@ def get_disponivel(data, efetivo, restrito):
     disp = list(efetivo.NOME.values)
     st.write(type(data))
     st.write((efetivo.EMBARQUE.dtype))
-    for i in efetivo[(efetivo.EMBARQUE > data) | (efetivo.DESEMBARQUE <= data)].NOME.values:
+    for i in efetivo[(pd.to_datetime(efetivo.EMBARQUE) > pd.to_datetime(data)) | (pd.to_datetime(efetivo.DESEMBARQUE) <= pd.to_datetime(data))].NOME.values:
         disp.remove(i)
-    for i in restrito[(restrito.INICIAL <= data) & (restrito.FINAL >= data)].NOME.unique():
+    for i in restrito[(pd.to_datetime(restrito.INICIAL) <= pd.to_datetime(data)) & (pd.to_datetime(restrito.FINAL) >= pd.to_datetime(data))].NOME.unique():
         if i in disp:
             disp.remove(i)
     return disp
