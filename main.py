@@ -67,6 +67,8 @@ vermelha.sort()
 
 def get_disponivel(data, efetivo, restrito):
     disp = list(efetivo.NOME.values)
+    st.write(type(data))
+    st.write((efetivo.EMBARQUE.dtype))
     for i in efetivo[(efetivo.EMBARQUE > data) | (efetivo.DESEMBARQUE <= data)].NOME.values:
         disp.remove(i)
     for i in restrito[(restrito.INICIAL <= data) & (restrito.FINAL >= data)].NOME.unique():
